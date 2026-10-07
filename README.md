@@ -61,3 +61,4 @@ The JavaScript implementation evaluates probabilities in log space, avoiding fac
 ## Limitations
 
 The model assumes a fixed packet count, two outcomes per packet, constant success probability, and independent outcomes. Real networks can have correlated losses caused by congestion, interference, routing problems, and changing network conditions. This simulator is an idealized educational model.
+# maths_project
