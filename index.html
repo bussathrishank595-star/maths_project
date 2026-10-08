@@ -30,7 +30,8 @@
       <h1>Network Packet<br /><em>Transmission Simulator</em></h1>
       <p>Analyze network reliability using Bernoulli Trials and Binomial Distribution. Model every delivered or lost packet in real time.</p>
       <div class="hero-metrics" aria-label="Current parameters">
-        <div><small>PACKETS</small><strong id="heroPackets">20</strong></div>
+        <div><small>DATA SIZE</small><strong id="heroDataSize">100 MB</strong></div>
+        <div><small>CALCULATED PACKETS</small><strong id="heroPackets">100</strong></div>
         <div><small>SUCCESS PROBABILITY</small><strong id="heroProbability">80%</strong></div>
         <div><small>MODEL</small><strong>BINOMIAL</strong></div>
       </div>
@@ -39,18 +40,20 @@
     <section class="dashboard-grid" id="simulation">
       <aside class="panel parameters-panel">
         <div class="panel-heading"><div><span class="section-index">01</span><h2>Simulation Parameters</h2></div><span class="chip">CONFIG</span></div>
-        <label for="packetCount">Number of packets <output id="packetCountDisplay">20</output></label>
-        <input id="packetCount" type="range" min="1" max="1000" value="20" />
-        <div class="input-line"><input id="packetCountNumber" type="number" min="1" max="1000" value="20" /><span>packets</span></div>
-        <label for="successProbability">Packet success probability <output id="probabilityDisplay">80%</output></label>
-        <input id="successProbability" type="range" min="0" max="100" value="80" />
-        <div class="input-line"><input id="probabilityNumber" type="number" min="0" max="100" value="80" /><span>%</span></div>
+        <label for="dataSize">Data size <output id="dataSizeDisplay">100 MB</output></label>
+        <div class="input-line"><input id="dataSize" type="number" min="0.01" max="100000" step="0.01" value="100" /><span>MB</span></div>
+        <label for="packetSize">Packet size <output id="packetSizeDisplay">1 MB</output></label>
+        <div class="input-line"><input id="packetSize" type="number" min="0.01" max="100000" step="0.01" value="1" /><span>MB</span></div>
+        <div class="transfer-calculation" id="transferCalculation">100 MB ÷ 1 MB = 100 packets</div>
+        <label for="networkCondition">Network condition</label>
+        <select id="networkCondition"><option value="reliable">Reliable — 95%</option><option value="normal" selected>Normal — 80%</option><option value="unstable">Unstable — 60%</option></select>
+        <div class="condition-readout"><span id="conditionName">NORMAL</span><b id="probabilityDisplay">80% SUCCESS</b><small id="failureDisplay">20% failure probability</small></div>
         <label for="simulationCount">Number of simulations</label>
         <select id="simulationCount"><option value="1">1 Simulation</option><option value="10">10 Simulations</option><option value="100">100 Simulations</option><option value="1000">1,000 Simulations</option></select>
         <p class="input-error" id="inputError" role="alert"></p>
         <button class="primary-button" id="startButton"><span>🚀</span> START TRANSMISSION</button>
         <button class="reset-button" id="resetButton">↻ RESET SIMULATION</button>
-        <div class="presets"><small>SCENARIO PRESETS</small><div><button data-preset="95">Reliable <b>95%</b></button><button data-preset="80">Normal <b>80%</b></button><button data-preset="60">Unstable <b>60%</b></button></div></div>
+        <div class="presets"><small>EDUCATIONAL MODEL</small><p>Condition probabilities are simplified for this simulation, not measurements of a real network.</p></div>
       </aside>
 
       <section class="panel transmission-panel">
@@ -61,7 +64,7 @@
           <div class="network-node receiver"><div class="node-icon">▣</div><strong>RECEIVER</strong><small>DESTINATION</small></div>
         </div>
         <div class="status-grid">
-          <div><small>PACKETS SENT</small><strong id="sentCount">0 <span>/ 20</span></strong></div>
+          <div><small>PACKETS SENT</small><strong id="sentCount">0 <span>/ 100</span></strong></div>
           <div><small>SUCCESSFUL</small><strong class="success-text" id="liveSuccessful">0</strong></div>
           <div><small>FAILED</small><strong class="failure-text" id="liveFailed">0</strong></div>
           <div><small>CURRENT SUCCESS RATE</small><strong id="liveRate">—</strong></div>
@@ -72,8 +75,9 @@
 
     <section class="results-section" aria-labelledby="resultHeading">
       <div class="section-title"><span class="section-index">03</span><div><h2 id="resultHeading">Transmission Results</h2><p>Observed outcomes from the current packet transmission.</p></div></div>
+      <div class="transfer-summary" id="transferSummary">Configure a data transfer, then start transmission to generate real Bernoulli outcomes.</div>
       <div class="result-cards">
-        <article class="result-card total"><span>TOTAL PACKETS</span><strong id="resultTotal">—</strong><small>configured trials</small></article>
+        <article class="result-card total"><span>TOTAL PACKETS</span><strong id="resultTotal">—</strong><small>calculated from data size</small></article>
         <article class="result-card success"><span>SUCCESSFUL</span><strong id="resultSuccess">—</strong><small>delivered packets</small></article>
         <article class="result-card failure"><span>FAILED</span><strong id="resultFailed">—</strong><small>lost packets</small></article>
         <article class="result-card rate"><span>EXPERIMENTAL RATE</span><strong id="resultRate">—</strong><small>successful transmissions</small></article>
@@ -81,8 +85,8 @@
     </section>
 
     <section class="analysis-grid" id="analysis">
-      <article class="panel formula-panel"><div class="panel-heading"><div><span class="section-index">04</span><h2>Bernoulli Trial</h2></div><span class="chip">ONE PACKET</span></div><p>Each packet transmission is one Bernoulli Trial because it has exactly two possible outcomes.</p><div class="branch-diagram"><div class="packet-symbol">▣<small>PACKET</small></div><div class="branch-line"></div><div class="outcome delivered">✓<span>SUCCESS</span><small>P = p</small></div><div class="outcome lost">×<span>FAILURE</span><small>P = 1 − p</small></div></div><div class="formula-mini"><span>P(Success) = <b>p</b></span><span>P(Failure) = <b>1 − p</b></span></div></article>
-      <article class="panel binomial-panel"><div class="panel-heading"><div><span class="section-index">05</span><h2>Binomial Distribution</h2></div><span class="chip">n TRIALS</span></div><p>With fixed, independent transmissions and a constant success probability, the total successes follow a Binomial distribution.</p><div class="main-formula">P(X = k) = <span>C(n, k)</span> · p<sup>k</sup> · (1 − p)<sup>n−k</sup></div><div class="formula-definitions"><div><b>n</b><span>Total trials</span></div><div><b>k</b><span>Successful packets</span></div><div><b>p</b><span>Success probability</span></div><div><b>C(n,k)</b><span>Ways to arrange successes</span></div></div></article>
+      <article class="panel formula-panel"><div class="panel-heading"><div><span class="section-index">04</span><h2>Bernoulli Trial</h2></div><span class="chip">ONE PACKET</span></div><p>Each packet has exactly two possible outcomes: successful delivery or packet loss. When the simulation runs, each packet receives exactly one outcome.</p><div class="branch-diagram"><div class="packet-symbol">▣<small>TRANSMIT</small></div><div class="branch-line"></div><div class="outcome delivered">✓<span>SUCCESS</span><small>P = p</small></div><div class="outcome lost">×<span>FAILURE</span><small>P = 1 − p</small></div></div><div class="formula-mini"><span>P(Success) = <b>p</b></span><span>P(Failure) = <b>1 − p</b></span></div></article>
+      <article class="panel binomial-panel"><div class="panel-heading"><div><span class="section-index">05</span><h2>Binomial Distribution</h2></div><span class="chip" id="binomialModel">100 TRIALS</span></div><p id="binomialDescription">With 100 independent packets and Normal-network probability p = 0.80, total deliveries follow a Binomial distribution.</p><div class="main-formula">P(X = k) = <span>C(n, k)</span> · p<sup>k</sup> · (1 − p)<sup>n−k</sup></div><div class="formula-definitions"><div><b>n</b><span>Total packets</span></div><div><b>k</b><span>Actual deliveries</span></div><div><b>p</b><span>Condition probability</span></div><div><b>C(n,k)</b><span>Ways to arrange successes</span></div></div></article>
     </section>
 
     <section class="probability-workspace" id="distribution">
@@ -97,14 +101,14 @@
 
     <section class="multiple-section" id="multiple">
       <div class="section-title"><span class="section-index">07</span><div><h2>Multiple Simulations</h2><p>Repeated experiments show the Law of Large Numbers in action.</p></div></div>
-      <div class="multiple-grid"><article class="panel comparison-panel"><div class="comparison-head"><span>THEORETICAL</span><span>EXPERIMENTAL</span></div><div class="comparison-values"><div><small>EXPECTED SUCCESSES</small><strong id="expectedSuccesses">16.00</strong></div><div><small>ACTUAL AVERAGE</small><strong id="actualAverage">—</strong></div></div><div class="comparison-values"><div><small>SUCCESS PROBABILITY</small><strong id="theoreticalRate">80.00%</strong></div><div><small>EXPERIMENTAL RATE</small><strong id="multipleRate">—</strong></div></div><p id="differenceText">Select a multi-run mode and start transmission to compare repeated experiments.</p></article><article class="panel reliability-panel"><small>NETWORK RELIABILITY</small><div class="reliability-number" id="reliabilityNumber">80%</div><p>Configured packet success probability</p><div class="reliability-meter"><div id="reliabilityFill"></div></div><div class="reliability-scale"><span>UNSTABLE</span><span>RELIABLE</span></div></article><article class="panel loss-panel"><small>EXPERIMENTAL PACKET LOSS</small><strong id="lossRate">—</strong><p id="lossFormula">Failed packets / Total packets × 100</p><div class="loss-divider"></div><small>THEORETICAL FAILURE</small><strong id="theoreticalFailure">20%</strong></article></div>
+      <div class="multiple-grid"><article class="panel comparison-panel"><div class="comparison-head"><span>THEORETICAL</span><span>EXPERIMENTAL</span></div><div class="comparison-values"><div><small>EXPECTED SUCCESSES</small><strong id="expectedSuccesses">80.00</strong></div><div><small>ACTUAL AVERAGE</small><strong id="actualAverage">—</strong></div></div><div class="comparison-values"><div><small>SUCCESS PROBABILITY</small><strong id="theoreticalRate">80.00%</strong></div><div><small>EXPERIMENTAL RATE</small><strong id="multipleRate">—</strong></div></div><p id="differenceText">Theoretical probability is configured by the network condition; the experimental rate comes from actual simulated outcomes.</p><div class="simulation-samples" id="simulationSamples">Run multiple simulations to view sample experimental rates.</div></article><article class="panel reliability-panel"><small>NETWORK CONDITION</small><div class="reliability-number" id="reliabilityNumber">80%</div><p id="reliabilityLabel">Normal: configured success probability</p><div class="reliability-meter"><div id="reliabilityFill"></div></div><div class="reliability-scale"><span>UNSTABLE</span><span>RELIABLE</span></div></article><article class="panel loss-panel"><small>EXPERIMENTAL PACKET LOSS</small><strong id="lossRate">—</strong><p id="lossFormula">Failed packets / Total packets × 100</p><div class="loss-divider"></div><small>THEORETICAL FAILURE</small><strong id="theoreticalFailure">20%</strong></article></div>
       <article class="panel lln-panel"><div><small>LAW OF LARGE NUMBERS</small><h3>Convergence monitor</h3><p>As independent trials increase, the experimental proportion generally approaches the configured success probability.</p></div><div class="lln-values" id="llnValues"><div><span>10 simulations</span><strong>—</strong></div><div><span>100 simulations</span><strong>—</strong></div><div><span>1,000 simulations</span><strong>—</strong></div></div></article>
     </section>
 
     <section class="education-section" id="how-it-works">
       <div class="section-title"><span class="section-index">08</span><div><h2>How The Model Works</h2><p>From a real-world network event to a probability distribution.</p></div></div>
-      <div class="process-flow"><div><b>1</b><span>Choose packet count and probability</span></div><i>→</i><div><b>2</b><span>Generate independent packet outcomes</span></div><i>→</i><div><b>3</b><span>Collect experimental results</span></div><i>→</i><div><b>4</b><span>Calculate and visualize the model</span></div></div>
-      <article class="assumptions"><div><span class="section-index">MODEL NOTE</span><h3>Assumptions of the model</h3></div><ol><li>The number of packets is fixed.</li><li>Every packet has two outcomes: success or failure.</li><li>Every packet has the same success probability.</li><li>Packet outcomes are independent.</li></ol><p>Real networks are more complex: congestion, interference, and routing can correlate packet losses. This is an idealized Binomial model for educational purposes.</p></article>
+      <div class="process-flow"><div><b>1</b><span>Enter data and packet size</span></div><i>→</i><div><b>2</b><span>Calculate packet count</span></div><i>→</i><div><b>3</b><span>Select condition and probability</span></div><i>→</i><div><b>4</b><span>Generate independent Bernoulli outcomes</span></div><i>→</i><div><b>5</b><span>Apply Binomial analysis and repeat</span></div></div>
+      <article class="assumptions"><div><span class="section-index">MODEL NOTE</span><h3>Assumptions of the model</h3></div><ol><li>The number of packets is fixed.</li><li>Every packet has two outcomes: success or failure.</li><li>Every packet has the same success probability.</li><li>Packet outcomes are independent.</li></ol><p>This is a probability-based educational simulation. It does not transmit real network packets or measure real Internet reliability. Real networks can have correlated losses caused by congestion, interference, and routing.</p></article>
     </section>
   </main>
   <footer><span>NETLAB / EDUCATIONAL PROBABILITY TOOL</span><span>BERNOULLI TRIALS · BINOMIAL DISTRIBUTION</span></footer>

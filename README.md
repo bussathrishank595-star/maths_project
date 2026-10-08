@@ -33,6 +33,8 @@ Open `index.html` in any modern web browser. The project is fully static.
 
 ## Mathematical Concepts
 
+Enter a data size, packet size, and network condition. The simulator calculates `n = ceil(data size / packet size)`, then assigns the simplified educational success probability from the chosen condition: Reliable (95%), Normal (80%), or Unstable (60%). It generates every delivered/lost packet outcome independently.
+
 Each packet is a Bernoulli Trial with success probability `p`. For `n` independent packets, the number of successful packets `X` follows:
 
 `X ~ Binomial(n, p)`
